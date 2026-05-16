@@ -494,8 +494,7 @@ function submitForm(e) {
   const arr = JSON.parse(localStorage.getItem(SK)||'[]');
   arr.push(rec); save(arr);
 
-  // Si Sheets está conectado, enviar directamente al Sheets
-  // Sheets siempre conectado
+  // Sheets siempre conectado — URL fija
   const url = 'https://script.google.com/macros/s/AKfycbxkGs81A5nDZgSY2jE92aGvmh21WGz4tae_GOP7dDxfpI0tpRC-2whrGisaalC-PrR2fQ/exec';
   if (url) {
     fetch(url, {
@@ -547,6 +546,7 @@ function setSyncStatus(msg, cls='') {
 // ══════════════════════════════════════════════════════
 async function syncSheets() {
   const url = 'https://script.google.com/macros/s/AKfycbxkGs81A5nDZgSY2jE92aGvmh21WGz4tae_GOP7dDxfpI0tpRC-2whrGisaalC-PrR2fQ/exec';
+  if (!url) { alert('URL no configurada.'); return; }
   const btn = document.getElementById('sync-btn');
   btn.disabled = true;
   setSyncStatus('🔄 Descargando datos desde Google Sheets…', 'loading');
@@ -590,7 +590,7 @@ function renderDash() {
   Object.assign(pill.style, { background: demo ? '#EEF2FF' : '#D8F3DC', color: demo ? '#4361EE' : '#2D6A4F' });
 
   // Sync status
-  const url = localStorage.getItem('sheets_url');
+  const url = 'https://script.google.com/macros/s/AKfycbxkGs81A5nDZgSY2jE92aGvmh21WGz4tae_GOP7dDxfpI0tpRC-2whrGisaalC-PrR2fQ/exec';
   if (url && document.getElementById('sync-status').textContent.includes('no configurada')) {
     setSyncStatus('Google Sheets conectado. Presione "Sincronizar" para cargar datos.', 'ok');
   }
@@ -700,9 +700,7 @@ function renderDash() {
 // ══════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cfg-banner').style.display = 'none';
-  setSyncStatus('✅ Google Sheets conectado automáticamente.', 'ok');
-    setSyncStatus('✅ Google Sheets conectado — ' + url.slice(0,55) + '…  Presione "Sincronizar" para cargar datos.', 'ok');
-  }
+  setSyncStatus('✅ Google Sheets conectado automáticamente. Presione "Sincronizar" para cargar datos.', 'ok');
 });
 </script>
 </body>
