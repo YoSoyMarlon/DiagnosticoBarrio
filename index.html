@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DiagnósticoBarrio — Bosa Laureles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gd:#1B4332;--gm:#2D6A4F;--gl:#40916C;--gp:#D8F3DC;
+  --am:#F4A261;--ad:#E76F51;
+  --bl:#4895EF;--bp:#EEF6FF;
+  --bg:#F7F4EF;--card:#FFFFFF;
+  --tx:#1A1C1E;--ts:#5A5F66;--br:#E2DDD6;
+  --sh:0 2px 16px rgba(27,67,50,.10);
+  --shl:0 8px 40px rgba(27,67,50,.16);
+  --r:14px;--rs:8px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;line-height:1.6}
+
+/* HEADER */
+header{background:var(--gd);padding:0 1.5rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.hi{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:1rem}
+.logo{display:flex;align-items:center;gap:.6rem;flex-shrink:0}
+.logo-ic{width:34px;height:34px;background:var(--am);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.logo-tx{font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem;color:#fff;line-height:1.2}
+.logo-sub{font-size:.62rem;color:rgba(255,255,255,.5);font-weight:400;display:block}
+nav{display:flex;gap:.2rem}
+.nb{padding:.4rem 1rem;border-radius:8px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;transition:all .2s;color:rgba(255,255,255,.6);background:transparent;white-space:nowrap}
+.nb:hover{background:rgba(255,255,255,.1);color:#fff}
+.nb.active{background:var(--am);color:var(--gd)}
+
+/* LAYOUT */
+main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem}
+.view{display:none}
+.view.active{display:block;animation:fi .22s ease}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* SHARED */
+.badge{display:inline-block;font-size:.72rem;font-weight:600;padding:.25rem .7rem;border-radius:20px;font-family:'Outfit',sans-serif;margin-bottom:.6rem}
+.bg-green{background:var(--gp);color:var(--gm)}
+.bg-blue{background:var(--bp);color:var(--bl)}
+.bg-amber{background:#FFF0E6;color:var(--ad)}
+.card{background:var(--card);border-radius:var(--r);padding:1.4rem;box-shadow:var(--sh);border:1px solid var(--br)}
+.card-title{font-family:'Outfit',sans-serif;font-size:.97rem;font-weight:700;color:var(--gd);margin-bottom:1rem;padding-bottom:.7rem;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.btn{display:inline-flex;align-items:center;gap:.4rem;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;border-radius:8px;transition:all .18s}
+.bp2{background:var(--gd);color:#fff;padding:.65rem 1.4rem;font-size:.9rem;box-shadow:0 3px 12px rgba(27,67,50,.25)}
+.bp2:hover{background:var(--gm);transform:translateY(-1px)}
+.bs{background:var(--gp);color:var(--gd);padding:.55rem 1.1rem;font-size:.85rem}
+.bs:hover{background:#b7e4c7}
+.bam{background:var(--am);color:var(--gd);padding:.55rem 1.1rem;font-size:.85rem}
+.bam:hover{background:var(--ad);color:#fff}
+.bbl{background:var(--bl);color:#fff;padding:.55rem 1.1rem;font-size:.85rem}
+.bbl:hover{background:#2d7dd2}
+.bsm{padding:.35rem .75rem!important;font-size:.78rem!important}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+/* FORM */
+.fh{text-align:center;margin-bottom:2rem}
+.fh h1{font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:var(--gd);margin-bottom:.4rem}
+.fh p{color:var(--ts);max-width:520px;margin:0 auto;font-size:.95rem}
+.sec-label{font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:700;color:var(--gm);text-transform:uppercase;letter-spacing:.06em;padding:.4rem 0 .8rem;border-bottom:2px solid var(--gp);margin-bottom:1rem;margin-top:.5rem}
+.fc{background:var(--card);border-radius:var(--r);padding:1.5rem;box-shadow:var(--sh);margin-bottom:.9rem;border:1px solid var(--br);transition:border-color .2s,box-shadow .2s}
+.fc:focus-within{border-color:var(--gl);box-shadow:var(--shl)}
+.ql{font-family:'Outfit',sans-serif;font-weight:600;font-size:.95rem;color:var(--gd);margin-bottom:.85rem;display:flex;gap:.55rem;align-items:flex-start}
+.qn{background:var(--gd);color:#fff;font-size:.7rem;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:.45rem}
+.opts.c1{grid-template-columns:1fr}
+.opts.c2{grid-template-columns:repeat(2,1fr)}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0}
+.opt label{display:block;padding:.55rem .85rem;border:2px solid var(--br);border-radius:var(--rs);cursor:pointer;font-size:.86rem;transition:all .15s;background:var(--bg);user-select:none}
+.opt label:hover{border-color:var(--gl);background:var(--gp)}
+.opt input:checked+label{border-color:var(--gd);background:var(--gp);color:var(--gd);font-weight:500}
+.ti{width:100%;padding:.65rem .9rem;border:2px solid var(--br);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:.9rem;background:var(--bg);resize:vertical;min-height:70px;transition:border-color .15s}
+.ti:focus{outline:none;border-color:var(--gl);background:#fff}
+.sub-area{text-align:center;margin-top:1.5rem}
+.ok-box{display:none;text-align:center;padding:2.5rem;background:var(--card);border-radius:var(--r);box-shadow:var(--sh);border:2px solid var(--gp)}
+.ok-box .ic{font-size:3rem;margin-bottom:.7rem}
+.ok-box h2{font-family:'Outfit',sans-serif;font-size:1.4rem;color:var(--gd);margin-bottom:.4rem}
+.ok-box p{color:var(--ts);margin-bottom:1.2rem}
+
+/* DASHBOARD */
+.dt{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.4rem;flex-wrap:wrap;gap:1rem}
+.dt h1{font-family:'Outfit',sans-serif;font-size:1.7rem;font-weight:800;color:var(--gd)}
+.dt p{color:var(--ts);font-size:.9rem;margin-top:.15rem}
+.pill{display:inline-flex;align-items:center;gap:.35rem;border-radius:20px;font-size:.72rem;font-weight:600;padding:.2rem .7rem;font-family:'Outfit',sans-serif}
+.kpi-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:1rem;margin-bottom:1.4rem}
+.kpi{background:var(--card);border-radius:var(--r);padding:1.2rem;box-shadow:var(--sh);border:1px solid var(--br);position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.cg::before{background:var(--gl)}
+.kpi.ca::before{background:var(--am)}
+.kpi.cr::before{background:var(--ad)}
+.kpi.cb::before{background:var(--bl)}
+.kpi-ic{font-size:1.35rem;margin-bottom:.35rem}
+.kpi-v{font-family:'Outfit',sans-serif;font-size:1.9rem;font-weight:800;color:var(--gd);line-height:1}
+.kpi-l{font-size:.74rem;color:var(--ts);margin-top:.3rem;font-weight:500}
+.cg2{display:grid;grid-template-columns:repeat(auto-fit,minmax(410px,1fr));gap:1.2rem;margin-bottom:1.4rem}
+.cw{position:relative;height:225px}
+.rec{border-radius:var(--r);padding:1.1rem 1.4rem;margin-bottom:1.4rem;display:flex;gap:.9rem;align-items:flex-start;flex-wrap:wrap}
+.rec.auto{background:linear-gradient(135deg,#EEF6FF,#DBEAFE);border:1.5px solid #93C5FD}
+.rec.mant{background:linear-gradient(135deg,#FFF7ED,#FEE2CC);border:1.5px solid #FDBA74}
+.rec.both{background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border:1.5px solid var(--gl)}
+.rec.nd{background:#F8F8F8;border:1.5px solid var(--br)}
+.rec-ic{font-size:1.8rem;flex-shrink:0;margin-top:.1rem}
+.rec-t{font-family:'Outfit',sans-serif;font-weight:700;font-size:.97rem;color:var(--gd)}
+.rec-d{font-size:.84rem;color:var(--ts);margin-top:.15rem}
+
+/* Sync */
+.sync-bar{background:var(--card);border:1px solid var(--br);border-radius:var(--r);padding:1rem 1.4rem;margin-bottom:1.4rem;display:flex;align-items:center;flex-wrap:wrap;gap:.8rem}
+.sync-status{font-size:.84rem;color:var(--ts);flex:1;min-width:120px}
+.sync-status.ok{color:var(--gl);font-weight:600}
+.sync-status.err{color:var(--ad);font-weight:600}
+.sync-status.loading{color:var(--bl)}
+
+/* Table */
+.tc{background:var(--card);border-radius:var(--r);padding:1.4rem;box-shadow:var(--sh);border:1px solid var(--br);margin-bottom:1.4rem}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.79rem}
+thead tr{background:var(--gd)}
+thead th{padding:.6rem .85rem;text-align:left;color:#fff;font-family:'Outfit',sans-serif;font-weight:600;font-size:.75rem;white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--br);transition:background .15s}
+tbody tr:hover{background:var(--gp)}
+tbody td{padding:.58rem .85rem;vertical-align:top}
+tbody tr:nth-child(even){background:#FAFAF8}
+tbody tr:nth-child(even):hover{background:var(--gp)}
+.tg{display:inline-block;padding:.1rem .4rem;border-radius:4px;font-size:.7rem;margin:.08rem;white-space:nowrap;background:var(--gp);color:var(--gm)}
+.tga{background:#FFF0E6;color:var(--ad)}
+
+/* Config */
+.cfg{background:#FFFBF0;border:1.5px dashed var(--am);border-radius:var(--r);padding:.9rem 1.2rem;margin-bottom:1.2rem;display:flex;gap:.8rem;align-items:flex-start;flex-wrap:wrap}
+.cfg-in{padding:.4rem .75rem;border:1.5px solid var(--br);border-radius:6px;font-size:.82rem;width:300px;max-width:100%;font-family:'DM Sans',sans-serif}
+.cfg-in:focus{outline:none;border-color:var(--am)}
+
+@media(max-width:640px){
+  .cg2{grid-template-columns:1fr}
+  .opts,.opts.c2{grid-template-columns:1fr}
+  main{padding:1.2rem 1rem 3rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hi">
+    <div class="logo">
+      <div class="logo-ic">🏪</div>
+      <div class="logo-tx">DiagnósticoBarrio<span class="logo-sub">Bosa Laureles · IS CUN 2026</span></div>
+    </div>
+    <nav>
+      <button class="nb active" onclick="showView('form',this)">📋 Diagnóstico</button>
+      <button class="nb"        onclick="showView('dash',this)">📊 Panel Investigador</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ══════════════════════════════════════════
+     MÓDULO 1 — FORMULARIO DE DIAGNÓSTICO
+══════════════════════════════════════════ -->
+<div id="view-form" class="view active">
+  <div class="fh">
+    <div class="badge bg-green">📍 Barrio Bosa Laureles — Localidad de Bosa, Bogotá D.C.</div>
+    <h1>Diagnóstico Tecnológico de su Negocio</h1>
+    <p>Responda estas preguntas para que podamos entender las necesidades de su negocio y ofrecerle una solución tecnológica gratuita. Solo toma 3 minutos.</p>
+  </div>
+
+  <div id="form-wrap">
+    <form id="df" onsubmit="submitForm(event)">
+
+      <div class="sec-label">A — Perfil del negocio</div>
+
+      <!-- CONTACTO -->
+      <div class="fc">
+        <div class="ql"><span class="qn" style="background:var(--am);color:var(--gd)">★</span>Información de contacto <em style="font-weight:400;color:var(--ts);font-size:.85rem">(para hacer seguimiento si su negocio es seleccionado)</em></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem">
+          <div>
+            <label style="font-size:.78rem;color:var(--ts);font-weight:600;display:block;margin-bottom:.3rem">Nombre del negocio <span style="font-weight:400">(opcional)</span></label>
+            <input type="text" name="neg" id="neg" class="ti" style="min-height:unset;resize:none;padding:.55rem .85rem" placeholder="Ej: Tienda La Esquina, Peluquería Mary...">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:var(--ts);font-weight:600;display:block;margin-bottom:.3rem">Nombre del propietario o encargado</label>
+            <input type="text" name="nom" id="nom" class="ti" style="min-height:unset;resize:none;padding:.55rem .85rem" placeholder="Su nombre completo">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:var(--ts);font-weight:600;display:block;margin-bottom:.3rem">Número de celular / WhatsApp</label>
+            <input type="tel" name="tel" id="tel" class="ti" style="min-height:unset;resize:none;padding:.55rem .85rem" placeholder="Ej: 3101234567">
+          </div>
+        </div>
+      </div>
+
+      <!-- P1 -->
+      <div class="fc">
+        <div class="ql"><span class="qn">1</span>¿Cuál es el tipo de negocio que usted atiende?</div>
+        <div class="opts">
+          <div class="opt"><input type="radio" name="q1" id="q1a" value="Tienda/Minimercado" required><label for="q1a">🛒 Tienda / Minimercado</label></div>
+          <div class="opt"><input type="radio" name="q1" id="q1b" value="Restaurante/Comidas rápidas"><label for="q1b">🍽️ Restaurante / Comidas rápidas</label></div>
+          <div class="opt"><input type="radio" name="q1" id="q1c" value="Peluquería/Estética"><label for="q1c">✂️ Peluquería / Estética</label></div>
+          <div class="opt"><input type="radio" name="q1" id="q1d" value="Papelería/Miscelánea"><label for="q1d">📎 Papelería / Miscelánea</label></div>
+          <div class="opt"><input type="radio" name="q1" id="q1e" value="Ferretería"><label for="q1e">🔧 Ferretería</label></div>
+          <div class="opt"><input type="radio" name="q1" id="q1f" value="Tecnología/Electrónica"><label for="q1f">💻 Tecnología / Electrónica</label></div>
+          <div class="opt"><input type="radio" name="q1" id="q1g" value="Droguería"><label for="q1g">💊 Droguería</label></div>
+          <div class="opt"><input type="radio" name="q1" id="q1h" value="Otro"><label for="q1h">🏬 Otro</label></div>
+        </div>
+      </div>
+
+      <!-- P2 -->
+      <div class="fc">
+        <div class="ql"><span class="qn">2</span>¿Cuántas personas trabajan en su negocio, incluyéndose usted?</div>
+        <div class="opts c2">
+          <div class="opt"><input type="radio" name="q2" id="q2a" value="Solo yo (1)" required><label for="q2a">👤 Solo yo</label></div>
+          <div class="opt"><input type="radio" name="q2" id="q2b" value="2 personas"><label for="q2b">👥 2 personas</label></div>
+          <div class="opt"><input type="radio" name="q2" id="q2c" value="3 a 5 personas"><label for="q2c">👥 3 a 5 personas</label></div>
+          <div class="opt"><input type="radio" name="q2" id="q2d" value="Más de 5"><label for="q2d">👥 Más de 5</label></div>
+        </div>
+      </div>
+
+      <div class="sec-label">B — Tareas y operación diaria</div>
+
+      <!-- P3 -->
+      <div class="fc">
+        <div class="ql"><span class="qn">3</span>¿Cuál es la tarea que más tiempo le consume cada día en su negocio?</div>
+        <div class="opts">
+          <div class="opt"><input type="radio" name="q3" id="q3a" value="Registrar ventas o servicios" required><label for="q3a">📝 Registrar ventas o servicios</label></div>
+          <div class="opt"><input type="radio" name="q3" id="q3b" value="Cuadrar la caja o calcular ganancias"><label for="q3b">💰 Cuadrar la caja o calcular ganancias</label></div>
+          <div class="opt"><input type="radio" name="q3" id="q3c" value="Atender y comunicarse con clientes"><label for="q3c">💬 Atender y comunicarse con clientes</label></div>
+          <div class="opt"><input type="radio" name="q3" id="q3d" value="Hacer pedidos a proveedores"><label for="q3d">📦 Hacer pedidos a proveedores</label></div>
+          <div class="opt"><input type="radio" name="q3" id="q3e" value="Agendar citas o turnos"><label for="q3e">📅 Agendar citas o turnos</label></div>
+          <div class="opt"><input type="radio" name="q3" id="q3f" value="Elaborar listas o reportes a mano"><label for="q3f">📋 Elaborar listas o reportes a mano</label></div>
+          <div class="opt"><input type="radio" name="q3" id="q3g" value="Otra tarea"><label for="q3g">➕ Otra tarea</label></div>
+        </div>
+      </div>
+
+      <!-- P4 -->
+      <div class="fc">
+        <div class="ql"><span class="qn">4</span>¿Cuánto tiempo dedica diariamente a tareas manuales y repetitivas?</div>
+        <div class="opts c2">
+          <div class="opt"><input type="radio" name="q4" id="q4a" value="Menos de 15 min" required><label for="q4a">⚡ Menos de 15 min</label></div>
+          <div class="opt"><input type="radio" name="q4" id="q4b" value="15 a 30 min"><label for="q4b">🕐 15 a 30 min</label></div>
+          <div class="opt"><input type="radio" name="q4" id="q4c" value="30 min a 1 hora"><label for="q4c">🕐 30 min a 1 hora</label></div>
+          <div class="opt"><input type="radio" name="q4" id="q4d" value="Más de 1 hora"><label for="q4d">⏳ Más de 1 hora</label></div>
+        </div>
+      </div>
+
+      <!-- P5 -->
+      <div class="fc">
+        <div class="ql"><span class="qn">5</span>¿Cómo lleva actualmente los registros de su negocio (ventas, clientes, citas, pedidos)?</div>
+        <div class="opts">
+          <div class="opt"><input type="radio" name="q5" id="q5a" value="De memoria" required><label for="q5a">🧠 De memoria</label></div>
+          <div class="opt"><input type="radio" name="q5" id="q5b" value="Cuaderno físico"><label for="q5b">📓 Cuaderno físico</label></div>
+          <div class="opt"><input type="radio" name="q5" id="q5c" value="Hoja de cálculo (Excel)"><label for="q5c">📊 Hoja de cálculo (Excel)</label></div>
+          <div class="opt"><input type="radio" name="q5" id="q5d" value="Aplicación en el celular"><label for="q5d">📱 Aplicación en el celular</label></div>
+          <div class="opt"><input type="radio" name="q5" id="q5e" value="Software en computador"><label for="q5e">🖥️ Software en computador</label></div>
+          <div class="opt"><input type="radio" name="q5" id="q5f" value="No llevo registros"><label for="q5f">❌ No llevo registros</label></div>
+        </div>
+      </div>
+
+      <!-- P6 -->
+      <div class="fc">
+        <div class="ql"><span class="qn">6</span>¿Cómo se comunica habitualmente con sus clientes y proveedores?</div>
+        <div class="opts">
+          <div class="opt"><input type="radio" name="q6" id="q6a" value="Llamadas telefónicas" required><label for="q6a">📞 Llamadas telefónicas</label></div>
+          <div class="opt"><input type="radio" name="q6" id="q6b" value="WhatsApp personal"><label for="q6b">💬 WhatsApp personal</label></div>
+          <div class="opt"><input type="radio" name="q6" id="q6c" value="WhatsApp Business"><label for="q6c">💼 WhatsApp Business</label></div>
+          <div class="opt"><input type="radio" name="q6" id="q6d" value="Redes sociales (Instagram/Facebook)"><label for="q6d">📸 Redes sociales</label></div>
+          <div class="opt"><input type="radio" name="q6" id="q6e" value="En persona solamente"><label for="q6e">🤝 En persona solamente</label></div>
+          <div class="opt"><input type="radio" name="q6" id="q6f" value="No tengo contacto digital"><label for="q6f">❌ No tengo contacto digital</label></div>
+        </div>
+      </div>
+
+      <div class="sec-label">C — Tecnología disponible</div>
+
+      <!-- P7 -->
+      <div class="fc">
+        <div class="ql"><span class="qn">7</span>¿Con qué dispositivos tecnológicos cuenta en su negocio?</div>
+        <div class="opts c2">
+          <div class="opt"><input type="radio" name="q7" id="q7a" value="Solo celular personal" required><label for="q7a">📱 Solo celular personal</label></div>
+          <div class="opt"><input type="radio" name="q7" id="q7b" value="Celular y computador"><label for="q7b">📱💻 Celular y computador</label></div>
+          <div class="opt"><input type="radio" name="q7" id="q7c" value="Solo computador"><label for="q7c">💻 Solo computador</label></div>
+          <div class="opt"><input type="radio" name="q7" id="q7d" value="Ninguno (todo manual)"><label for="q7d">❌ Ninguno (todo manual)</label></div>
+        </div>
+      </div>
+
+      <!-- P8 -->
+      <div class="fc">
+        <div class="ql"><span class="qn">8</span>¿Ha tenido problemas técnicos con alguno de sus dispositivos?</div>
+        <div class="opts c1">
+          <div class="opt"><input type="radio" name="q8" id="q8a" value="No, todo funciona bien" required><label for="q8a">✅ No, todo funciona bien</label></div>
+          <div class="opt"><input type="radio" name="q8" id="q8b" value="Sí — el computador es lento o tiene errores"><label for="q8b">🐌 Sí — el computador es lento o tiene errores</label></div>
+          <div class="opt"><input type="radio" name="q8" id="q8c" value="Sí — el celular tiene problemas"><label for="q8c">📱 Sí — el celular tiene problemas</label></div>
+          <div class="opt"><input type="radio" name="q8" id="q8d" value="Sí — no sé usar bien los dispositivos que tengo"><label for="q8d">🤷 Sí — no sé usar bien los dispositivos que tengo</label></div>
+        </div>
+      </div>
+
+      <!-- P9 — checkboxes -->
+      <div class="fc">
+        <div class="ql"><span class="qn">9</span>¿Usa actualmente alguna aplicación o herramienta tecnológica en su negocio? <em style="font-weight:400;color:var(--ts)">(puede marcar varias)</em></div>
+        <div class="opts c1">
+          <div class="opt"><input type="checkbox" name="q9" id="q9a" value="WhatsApp Business"><label for="q9a">💼 WhatsApp Business</label></div>
+          <div class="opt"><input type="checkbox" name="q9" id="q9b" value="Redes sociales para vender"><label for="q9b">📸 Redes sociales para vender (Instagram, Facebook)</label></div>
+          <div class="opt"><input type="checkbox" name="q9" id="q9c" value="Aplicación de pagos (Nequi/Daviplata)"><label for="q9c">💳 Aplicación de pagos (Nequi, Daviplata, Bancolombia)</label></div>
+          <div class="opt"><input type="checkbox" name="q9" id="q9d" value="Excel o Google Sheets"><label for="q9d">📊 Excel o Google Sheets</label></div>
+          <div class="opt"><input type="checkbox" name="q9" id="q9e" value="Ninguna aplicación"><label for="q9e">❌ Ninguna aplicación actualmente</label></div>
+          <div class="opt"><input type="checkbox" name="q9" id="q9f" value="Otra aplicación"><label for="q9f">➕ Otra aplicación</label></div>
+        </div>
+      </div>
+
+      <div class="sec-label">D — Necesidades y adopción tecnológica</div>
+
+      <!-- P10 — checkboxes -->
+      <div class="fc">
+        <div class="ql"><span class="qn">10</span>¿Qué tipo de ayuda tecnológica le sería más útil para su negocio? <em style="font-weight:400;color:var(--ts)">(puede marcar varias)</em></div>
+        <div class="opts c1">
+          <div class="opt"><input type="checkbox" name="q10" id="q10a" value="Una app para registrar ventas o servicios fácilmente"><label for="q10a">📱 Una app para registrar ventas o servicios fácilmente</label></div>
+          <div class="opt"><input type="checkbox" name="q10" id="q10b" value="Arreglar o mejorar el computador"><label for="q10b">🔧 Arreglar o mejorar el rendimiento del computador</label></div>
+          <div class="opt"><input type="checkbox" name="q10" id="q10c" value="Aprender a usar WhatsApp Business o redes sociales"><label for="q10c">📲 Aprender a usar WhatsApp Business o redes sociales</label></div>
+          <div class="opt"><input type="checkbox" name="q10" id="q10d" value="Una herramienta para enviar mensajes automáticos a clientes"><label for="q10d">🤖 Una herramienta para enviar mensajes automáticos a clientes</label></div>
+          <div class="opt"><input type="checkbox" name="q10" id="q10e" value="Capacitación en herramientas tecnológicas útiles"><label for="q10e">🎓 Capacitación en herramientas tecnológicas útiles y gratuitas</label></div>
+          <div class="opt"><input type="checkbox" name="q10" id="q10f" value="Instalarme una app gratuita y enseñarme a usarla"><label for="q10f">⚙️ Que me instalen una app gratuita y me enseñen a usarla</label></div>
+        </div>
+      </div>
+
+      <!-- P11 -->
+      <div class="fc">
+        <div class="ql"><span class="qn">11</span>¿Qué tan cómodo se siente usando tecnología (celular, computador, aplicaciones)?</div>
+        <div class="opts">
+          <div class="opt"><input type="radio" name="q11" id="q11a" value="Muy cómodo" required><label for="q11a">😊 Muy cómodo</label></div>
+          <div class="opt"><input type="radio" name="q11" id="q11b" value="Cómodo"><label for="q11b">🙂 Cómodo</label></div>
+          <div class="opt"><input type="radio" name="q11" id="q11c" value="Más o menos"><label for="q11c">😐 Más o menos</label></div>
+          <div class="opt"><input type="radio" name="q11" id="q11d" value="Poco cómodo"><label for="q11d">😕 Poco cómodo</label></div>
+          <div class="opt"><input type="radio" name="q11" id="q11e" value="Nada cómodo"><label for="q11e">😟 Nada cómodo</label></div>
+        </div>
+      </div>
+
+      <!-- P12 -->
+      <div class="fc">
+        <div class="ql"><span class="qn">12</span>¿Hay algún proceso de su negocio que quisiera mejorar o que le gustaría que fuera más fácil? Descríbalo brevemente.</div>
+        <textarea class="ti" name="q12" placeholder="Ejemplo: me gustaría poder agendar las citas sin usar papel, o que el computador encienda más rápido, o recibir pagos por el celular…"></textarea>
+      </div>
+
+      <div class="sub-area">
+        <button type="submit" class="btn bp2" id="sbtn">✅ Enviar diagnóstico</button>
+        <p style="margin-top:.6rem;font-size:.77rem;color:var(--ts)">Información confidencial — uso exclusivo para investigación académica.</p>
+      </div>
+    </form>
+  </div>
+
+  <div class="ok-box" id="ok-box">
+    <div class="ic">🎉</div>
+    <h2>¡Gracias por participar!</h2>
+    <p>Su diagnóstico fue registrado. Si su negocio es seleccionado para recibir la solución tecnológica gratuita, el investigador se pondrá en contacto con usted.</p>
+    <button class="btn bs" onclick="resetForm()">Registrar otro negocio</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     MÓDULO 2 — PANEL INVESTIGADOR
+══════════════════════════════════════════ -->
+<div id="view-dash" class="view">
+
+  <!-- Config Google Sheets -->
+  <div class="cfg" id="cfg-banner">
+    <span style="font-size:1.25rem">⚙️</span>
+    <div>
+      <strong style="font-size:.88rem">Conectar Google Sheets</strong>
+      <p style="font-size:.79rem;color:var(--ts);margin:.1rem 0 .5rem">Pegue la URL de su Apps Script para habilitar la sincronización en la nube.</p>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <input class="cfg-in" id="sh-url" placeholder="https://script.google.com/macros/s/...">
+        <button class="btn bam bsm" onclick="saveConfig()">Guardar</button>
+        <button class="btn bs bsm"  onclick="hideCfg()">Solo local</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sync bar -->
+  <div class="sync-bar">
+    <span style="font-size:1.1rem">☁️</span>
+    <span class="sync-status" id="sync-status">
+      Sincronización no configurada — conecte Google Sheets para activarla.
+    </span>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+      <button class="btn bbl bsm" id="sync-btn" onclick="syncSheets()">🔄 Sincronizar (Sheets → página)</button>
+      <button class="btn bs bsm" onclick="renderDash()">↺ Actualizar vista</button>
+      <button class="btn bs bsm" onclick="showCfg()" title="Cambiar URL de Google Sheets">⚙️ Cambiar URL</button>
+    </div>
+  </div>
+
+  <!-- Header + pill -->
+  <div class="dt">
+    <div>
+      <h1>Panel del Investigador</h1>
+      <p>Diagnósticos recopilados — Bosa Laureles &nbsp;
+        <span class="pill" id="mode-pill" style="background:#EEF2FF;color:#4361EE">Modo Demo</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-g" id="kpi-g"></div>
+
+  <!-- Recommendation -->
+  <div id="rec-area"></div>
+
+  <!-- Charts -->
+  <div class="cg2">
+    <div class="card"><div class="card-title">🏪 Tipos de negocio encuestados</div><div class="cw"><canvas id="c-tipos"></canvas></div></div>
+    <div class="card"><div class="card-title">⏳ Tarea que más tiempo consume</div><div class="cw"><canvas id="c-tareas"></canvas></div></div>
+    <div class="card"><div class="card-title">📱 Dispositivos disponibles en el negocio</div><div class="cw"><canvas id="c-disp"></canvas></div></div>
+    <div class="card"><div class="card-title">🎯 Tipo de ayuda tecnológica deseada</div><div class="cw"><canvas id="c-ayuda"></canvas></div></div>
+  </div>
+
+  <!-- Table -->
+  <div class="tc">
+    <div class="card-title">📋 Respuestas individuales <span id="tbl-n" style="font-size:.77rem;font-weight:400;color:var(--ts)"></span></div>
+    <div class="tw">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Nombre negocio</th><th>Contacto</th><th>Teléfono</th>
+          <th>Tipo negocio</th><th>Personas</th><th>Tarea principal</th>
+          <th>Tiempo manual</th><th>Dispositivos</th>
+          <th>Problemas técnicos</th><th>Ayuda deseada</th><th>Observación libre</th>
+        </tr></thead>
+        <tbody id="tbl-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /view-dash -->
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════
+// DATA & STORAGE
+// ══════════════════════════════════════════════════════
+const SK = 'bosa_diag_v3';
+const DEMO = [
+  {q1:'Tienda/Minimercado',q2:'Solo yo (1)',q3:'Registrar ventas o servicios',q4:'30 min a 1 hora',q5:'Cuaderno físico',q6:'WhatsApp personal',q7:'Celular y computador',q8:'Sí — el computador es lento o tiene errores',q9:'WhatsApp Business,Aplicación de pagos (Nequi/Daviplata)',q10:'Una app para registrar ventas o servicios fácilmente,Arreglar o mejorar el computador',q11:'Poco cómodo',q12:'El computador tarda mucho en encender y eso me retrasa en la mañana',ts:'2026-04-10 09:15'},
+  {q1:'Restaurante/Comidas rápidas',q2:'3 a 5 personas',q3:'Cuadrar la caja o calcular ganancias',q4:'Más de 1 hora',q5:'De memoria',q6:'En persona solamente',q7:'Solo celular personal',q8:'No, todo funciona bien',q9:'Ninguna aplicación',q10:'Una app para registrar ventas o servicios fácilmente,Capacitación en herramientas tecnológicas útiles',q11:'Cómodo',q12:'Saber cuánto vendo exactamente cada día y cuál es mi ganancia real',ts:'2026-04-10 10:30'},
+  {q1:'Peluquería/Estética',q2:'2 personas',q3:'Agendar citas o turnos',q4:'15 a 30 min',q5:'Cuaderno físico',q6:'WhatsApp personal',q7:'Solo celular personal',q8:'No, todo funciona bien',q9:'Redes sociales para vender',q10:'Una herramienta para enviar mensajes automáticos a clientes,Instalarme una app gratuita y enseñarme a usarla',q11:'Cómodo',q12:'Recordarles automáticamente la cita a los clientes por WhatsApp',ts:'2026-04-11 08:00'},
+  {q1:'Papelería/Miscelánea',q2:'Solo yo (1)',q3:'Elaborar listas o reportes a mano',q4:'30 min a 1 hora',q5:'Cuaderno físico',q6:'Llamadas telefónicas',q7:'Celular y computador',q8:'Sí — el computador es lento o tiene errores',q9:'Ninguna aplicación',q10:'Arreglar o mejorar el computador,Capacitación en herramientas tecnológicas útiles',q11:'Más o menos',q12:'El computador enciende en 5 minutos, pierdo mucho tiempo esperando',ts:'2026-04-11 14:20'},
+  {q1:'Ferretería',q2:'3 a 5 personas',q3:'Hacer pedidos a proveedores',q4:'Más de 1 hora',q5:'Cuaderno físico',q6:'Llamadas telefónicas',q7:'Celular y computador',q8:'Sí — el computador es lento o tiene errores',q9:'Ninguna aplicación',q10:'Una app para registrar ventas o servicios fácilmente,Arreglar o mejorar el computador',q11:'Poco cómodo',q12:'Saber qué productos se me acaban para hacer el pedido antes de que falten',ts:'2026-04-12 11:10'},
+  {q1:'Droguería',q2:'2 personas',q3:'Registrar ventas o servicios',q4:'Menos de 15 min',q5:'Software en computador',q6:'WhatsApp Business',q7:'Celular y computador',q8:'No, todo funciona bien',q9:'WhatsApp Business,Aplicación de pagos (Nequi/Daviplata)',q10:'Aprender a usar WhatsApp Business o redes sociales,Capacitación en herramientas tecnológicas útiles',q11:'Muy cómodo',q12:'Aprender a publicar mis productos en redes para atraer más clientes',ts:'2026-04-12 16:45'},
+];
+const COLORS = ['#1B4332','#40916C','#F4A261','#4895EF','#E76F51','#9B5DE5','#2EC4B6','#F7B731','#B5838D','#6D6875'];
+let charts = {};
+
+function load() {
+  const s = localStorage.getItem(SK);
+  const l = s ? JSON.parse(s) : [];
+  return l.length ? l : DEMO;
+}
+function isDemo() {
+  const s = localStorage.getItem(SK);
+  return !s || !JSON.parse(s).length;
+}
+function save(arr) { localStorage.setItem(SK, JSON.stringify(arr)); }
+
+// ══════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════
+function showView(v, btn) {
+  document.querySelectorAll('.view').forEach(e => e.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(e => e.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (v === 'dash') renderDash();
+}
+
+// ══════════════════════════════════════════════════════
+// FORM
+// ══════════════════════════════════════════════════════
+function submitForm(e) {
+  e.preventDefault();
+  const btn = document.getElementById('sbtn');
+  btn.disabled = true; btn.textContent = 'Enviando…';
+  const fd = new FormData(e.target);
+  const rec = {
+    neg:fd.get('neg')||'', nom:fd.get('nom')||'', tel:fd.get('tel')||'',
+    q1:fd.get('q1')||'', q2:fd.get('q2')||'', q3:fd.get('q3')||'',
+    q4:fd.get('q4')||'', q5:fd.get('q5')||'', q6:fd.get('q6')||'',
+    q7:fd.get('q7')||'', q8:fd.get('q8')||'',
+    q9:fd.getAll('q9').join(','), q10:fd.getAll('q10').join(','),
+    q11:fd.get('q11')||'', q12:fd.get('q12')||'',
+    ts: new Date().toLocaleString('es-CO',{hour12:false}).replace(',','')
+  };
+
+  // Guardar en local siempre
+  const arr = JSON.parse(localStorage.getItem(SK)||'[]');
+  arr.push(rec); save(arr);
+
+  // Si Sheets está conectado, enviar directamente al Sheets
+  const url = localStorage.getItem('sheets_url');
+  if (url) {
+    fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(rec)
+    }).catch(() => {});
+  }
+
+  setTimeout(() => {
+    document.getElementById('form-wrap').style.display = 'none';
+    document.getElementById('ok-box').style.display = 'block';
+    btn.disabled = false; btn.textContent = '✅ Enviar diagnóstico';
+  }, 500);
+}
+function resetForm() {
+  document.getElementById('df').reset();
+  document.getElementById('form-wrap').style.display = 'block';
+  document.getElementById('ok-box').style.display = 'none';
+}
+
+// ══════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════
+function saveConfig() {
+  const url = document.getElementById('sh-url').value.trim();
+  if (!url) return;
+  localStorage.setItem('sheets_url', url);
+  document.getElementById('cfg-banner').style.display = 'none';
+  setSyncStatus('✅ Google Sheets conectado. Presione "Sincronizar" para cargar los datos del Sheets.', 'ok');
+}
+function hideCfg()  { document.getElementById('cfg-banner').style.display = 'none'; }
+function showCfg()  {
+  const banner = document.getElementById('cfg-banner');
+  const url = localStorage.getItem('sheets_url') || '';
+  document.getElementById('sh-url').value = url;
+  banner.style.display = 'flex';
+  banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function setSyncStatus(msg, cls='') {
+  const el = document.getElementById('sync-status');
+  el.textContent = msg;
+  el.className = 'sync-status' + (cls ? ' ' + cls : '');
+}
+
+// ══════════════════════════════════════════════════════
+// SYNC BIDIRECCIONAL
+// ══════════════════════════════════════════════════════
+async function syncSheets() {
+  const url = localStorage.getItem('sheets_url');
+  if (!url) {
+    alert('⚠️ Primero configure la URL de Google Sheets usando el botón ⚙️ Cambiar URL.');
+    return;
+  }
+  const btn = document.getElementById('sync-btn');
+  btn.disabled = true;
+  setSyncStatus('🔄 Descargando datos desde Google Sheets…', 'loading');
+
+  try {
+    const res  = await fetch(url + '?action=getAll');
+    const json = await res.json();
+
+    if (json.status !== 'ok') throw new Error(json.message || 'Respuesta inesperada del servidor.');
+
+    const sheetsRecs = json.records || [];
+
+    // Google Sheets es la fuente de verdad — reemplazar local completamente
+    save(sheetsRecs);
+
+    const msg = `✅ Sincronizado — ${sheetsRecs.length} registro${sheetsRecs.length !== 1 ? 's' : ''} cargados desde Google Sheets.`;
+    setSyncStatus(msg, 'ok');
+    renderDash();
+  } catch(err) {
+    setSyncStatus('❌ Error al sincronizar: ' + err.message + '. Verifique la URL y los permisos del Apps Script.', 'err');
+  }
+  btn.disabled = false;
+}
+
+// pushToSheets se usa solo en submitForm para envío individual directo
+
+
+// ══════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════
+function cnt(arr, f, v)   { return arr.filter(r => r[f] === v).length; }
+function cntHas(arr, f, v){ return arr.filter(r => r[f] && r[f].includes(v)).length; }
+function pct(n, t)        { return t ? Math.round(n/t*100) : 0; }
+
+function renderDash() {
+  const data = load(), n = data.length, demo = isDemo();
+
+  // Pill
+  const pill = document.getElementById('mode-pill');
+  pill.textContent = demo ? 'Modo Demo' : `${n} respuestas reales`;
+  Object.assign(pill.style, { background: demo ? '#EEF2FF' : '#D8F3DC', color: demo ? '#4361EE' : '#2D6A4F' });
+
+  // Sync status
+  const url = localStorage.getItem('sheets_url');
+  if (url && document.getElementById('sync-status').textContent.includes('no configurada')) {
+    setSyncStatus('Google Sheets conectado. Presione "Sincronizar" para cargar datos.', 'ok');
+  }
+
+  // KPIs
+  const conProb  = data.filter(r => r.q8 && r.q8 !== 'No, todo funciona bien').length;
+  const masDeMedia = data.filter(r => r.q4 === 'Más de 1 hora' || r.q4 === '30 min a 1 hora').length;
+  const quiereCap  = cntHas(data, 'q10', 'Capacitación');
+  const comodo     = cnt(data,'q11','Muy cómodo') + cnt(data,'q11','Cómodo');
+
+  document.getElementById('kpi-g').innerHTML = `
+    <div class="kpi cg"><div class="kpi-ic">📋</div><div class="kpi-v">${n}</div><div class="kpi-l">Negocios encuestados</div></div>
+    <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-v">${pct(masDeMedia,n)}%</div><div class="kpi-l">Más de 30 min en tareas manuales</div></div>
+    <div class="kpi ca"><div class="kpi-ic">🔧</div><div class="kpi-v">${pct(conProb,n)}%</div><div class="kpi-l">Con problemas técnicos</div></div>
+    <div class="kpi cb"><div class="kpi-ic">🙌</div><div class="kpi-v">${pct(comodo,n)}%</div><div class="kpi-l">Cómodos con tecnología</div></div>`;
+
+  // Recommendation based on q10
+  const wantMant  = cntHas(data, 'q10', 'Arreglar o mejorar el computador');
+  const wantAuto  = cntHas(data, 'q10', 'Una app para registrar ventas') + cntHas(data, 'q10', 'Una herramienta para enviar mensajes') + cntHas(data, 'q10', 'Instalarme una app');
+  const wantCap   = cntHas(data, 'q10', 'Capacitación');
+  const threshold = Math.ceil(n / 2);
+
+  let recHtml = '';
+  const scores = [{k:'mant',v:wantMant},{k:'auto',v:wantAuto},{k:'cap',v:wantCap}].sort((a,b)=>b.v-a.v);
+  const top = scores[0];
+
+  if (n < 3) {
+    recHtml = `<div class="rec nd"><div class="rec-ic">📊</div><div><div class="rec-t">Recopile más respuestas</div><div class="rec-d">Se necesitan al menos 3 respuestas para generar una recomendación automática. Actualmente hay ${n} registro${n!==1?'s':''}.</div></div></div>`;
+  } else if (wantMant >= threshold && wantAuto >= threshold) {
+    recHtml = `<div class="rec both"><div class="rec-ic">🎯</div><div><div class="rec-t">Recomendación: Ambas soluciones aplican</div><div class="rec-d">${pct(wantAuto,n)}% necesita automatización o instalación de apps → <strong>Solución A</strong>. ${pct(wantMant,n)}% necesita arreglar o mejorar su equipo → <strong>Solución B (Mantenimiento Preventivo)</strong>. Definir según el negocio seleccionado en la sesión de profundización.</div></div></div>`;
+  } else if (top.k === 'mant' && wantMant >= threshold) {
+    recHtml = `<div class="rec mant"><div class="rec-ic">🔧</div><div><div class="rec-t">Recomendación: Mantenimiento Preventivo del Equipo (Solución B)</div><div class="rec-d">${pct(wantMant,n)}% de los encuestados necesita arreglar o mejorar su computador. El mantenimiento interno (limpieza de hardware) y externo (CCleaner, antivirus, desactivar inicio) puede reducir el tiempo de encendido de 4+ minutos a menos de 45 segundos y mejorar el rendimiento general.</div></div></div>`;
+  } else if (top.k === 'auto' && wantAuto >= threshold) {
+    recHtml = `<div class="rec auto"><div class="rec-ic">⚡</div><div><div class="rec-t">Recomendación: Automatización / Instalación de App (Solución A)</div><div class="rec-d">${pct(wantAuto,n)}% de los encuestados quiere una app para registrar ventas, enviar mensajes automáticos a clientes o que le instalen y enseñen una herramienta gratuita. Se puede implementar un script Python, instalar WhatsApp Business, Google Sheets o una app de punto de venta gratuita y capacitar al propietario en su uso.</div></div></div>`;
+  } else if (top.k === 'cap' && wantCap >= threshold) {
+    recHtml = `<div class="rec auto"><div class="rec-ic">🎓</div><div><div class="rec-t">Recomendación: Capacitación Tecnológica (Solución A — variante)</div><div class="rec-d">${pct(wantCap,n)}% de los encuestados desea capacitación en herramientas tecnológicas útiles. La intervención consiste en identificar la herramienta más adecuada (WhatsApp Business, Google Forms, Google Sheets, app de agenda gratuita), instalarla y realizar una sesión de capacitación práctica con el propietario.</div></div></div>`;
+  } else {
+    recHtml = `<div class="rec nd"><div class="rec-ic">📊</div><div><div class="rec-t">Diagnóstico en curso — sin tendencia clara aún</div><div class="rec-d">Las respuestas están distribuidas entre varias necesidades. Continúe encuestando negocios o revise la tabla individual para identificar el caso más crítico y viable.</div></div></div>`;
+  }
+  document.getElementById('rec-area').innerHTML = recHtml;
+
+  // ── Charts
+  ['c-tipos','c-tareas','c-disp','c-ayuda'].forEach(id => {
+    if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+  });
+
+  // Tipos de negocio
+  const tiposL = ['Tienda/Minimercado','Restaurante/Comidas rápidas','Peluquería/Estética','Papelería/Miscelánea','Ferretería','Tecnología/Electrónica','Droguería','Otro'];
+  const tiposV = tiposL.map(l => cnt(data,'q1',l));
+  charts['c-tipos'] = new Chart(document.getElementById('c-tipos'), {
+    type:'doughnut',
+    data:{ labels: tiposL.filter((_,i)=>tiposV[i]>0), datasets:[{ data: tiposV.filter(v=>v>0), backgroundColor:COLORS, borderWidth:2, borderColor:'#fff' }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'right', labels:{ font:{family:'DM Sans',size:10}, boxWidth:10 } } } }
+  });
+
+  // Tareas que más tiempo consumen
+  const tareasL = ['Registrar ventas','Cuadrar caja','Atender clientes','Pedidos a proveedores','Agendar citas','Listas/reportes','Otra'];
+  const tareasK = ['Registrar ventas o servicios','Cuadrar la caja o calcular ganancias','Atender y comunicarse con clientes','Hacer pedidos a proveedores','Agendar citas o turnos','Elaborar listas o reportes a mano','Otra tarea'];
+  charts['c-tareas'] = new Chart(document.getElementById('c-tareas'), {
+    type:'bar',
+    data:{ labels: tareasL, datasets:[{ data: tareasK.map(k=>cnt(data,'q3',k)), backgroundColor:COLORS, borderRadius:5, borderSkipped:false }] },
+    options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{ x:{beginAtZero:true,ticks:{precision:0,font:{family:'DM Sans'}}}, y:{ticks:{font:{family:'DM Sans',size:10}}} } }
+  });
+
+  // Dispositivos
+  const dispL = ['Solo celular','Celular + PC','Solo PC','Ninguno'];
+  const dispK = ['Solo celular personal','Celular y computador','Solo computador','Ninguno (todo manual)'];
+  charts['c-disp'] = new Chart(document.getElementById('c-disp'), {
+    type:'pie',
+    data:{ labels:dispL, datasets:[{ data:dispK.map(k=>cnt(data,'q7',k)), backgroundColor:COLORS.slice(0,4), borderWidth:2, borderColor:'#fff' }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{font:{family:'DM Sans',size:10},boxWidth:10} } } }
+  });
+
+  // Ayuda deseada
+  const ayudaL = ['App ventas/servicios','Arreglar PC','WhatsApp/Redes','Mensajes automáticos','Capacitación','Instalar app gratis'];
+  const ayudaK = ['Una app para registrar ventas o servicios fácilmente','Arreglar o mejorar el computador','Aprender a usar WhatsApp Business o redes sociales','Una herramienta para enviar mensajes automáticos a clientes','Capacitación en herramientas tecnológicas útiles','Instalarme una app gratuita y enseñarme a usarla'];
+  charts['c-ayuda'] = new Chart(document.getElementById('c-ayuda'), {
+    type:'bar',
+    data:{ labels:ayudaL, datasets:[{ data:ayudaK.map(k=>cntHas(data,'q10',k)), backgroundColor:COLORS, borderRadius:5, borderSkipped:false }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true,ticks:{precision:0,font:{family:'DM Sans'}}}, x:{ticks:{font:{family:'DM Sans',size:9},maxRotation:30}} } }
+  });
+
+  // Table
+  document.getElementById('tbl-n').textContent = `${n} registro${n!==1?'s':''}`;
+  document.getElementById('tbl-body').innerHTML = data.map((r,i) => {
+    const ayudaTags = r.q10 ? r.q10.split(',').filter(Boolean).map(t=>`<span class="tg">${t.trim()}</span>`).join('') : '—';
+    const probTag   = r.q8 && r.q8 !== 'No, todo funciona bien' ? `<span class="tg tga">${r.q8}</span>` : '<span style="color:var(--gl);font-size:.8rem">✅ Sin problemas</span>';
+    return `<tr>
+      <td><b>${i+1}</b></td>
+      <td style="font-weight:600;color:var(--gd)">${r.neg||'—'}</td>
+      <td>${r.nom||'—'}</td>
+      <td>${r.tel ? `<a href="tel:${r.tel}" style="color:var(--bl)">${r.tel}</a>` : '—'}</td>
+      <td>${r.q1||'—'}</td>
+      <td>${r.q2||'—'}</td>
+      <td>${r.q3||'—'}</td>
+      <td>${r.q4||'—'}</td>
+      <td>${r.q7||'—'}</td>
+      <td>${probTag}</td>
+      <td style="min-width:180px">${ayudaTags}</td>
+      <td style="font-style:italic;color:var(--ts);font-size:.76rem;max-width:160px">${r.q12||'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  const url = localStorage.getItem('sheets_url');
+  if (url) {
+    document.getElementById('sh-url').value = url;
+    document.getElementById('cfg-banner').style.display = 'none';
+    setSyncStatus('✅ Google Sheets conectado — ' + url.slice(0,55) + '…  Presione "Sincronizar" para cargar datos.', 'ok');
+  }
+});
+</script>
+</body>
+</html>
