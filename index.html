@@ -495,7 +495,8 @@ function submitForm(e) {
   arr.push(rec); save(arr);
 
   // Si Sheets está conectado, enviar directamente al Sheets
-  const url = localStorage.getItem('sheets_url');
+  // Sheets siempre conectado
+  const url = 'https://script.google.com/macros/s/AKfycbxkGs81A5nDZgSY2jE92aGvmh21WGz4tae_GOP7dDxfpI0tpRC-2whrGisaalC-PrR2fQ/exec';
   if (url) {
     fetch(url, {
       method: 'POST',
@@ -545,11 +546,7 @@ function setSyncStatus(msg, cls='') {
 // SYNC BIDIRECCIONAL
 // ══════════════════════════════════════════════════════
 async function syncSheets() {
-  const url = localStorage.getItem('sheets_url');
-  if (!url) {
-    alert('⚠️ Primero configure la URL de Google Sheets usando el botón ⚙️ Cambiar URL.');
-    return;
-  }
+  const url = 'https://script.google.com/macros/s/AKfycbxkGs81A5nDZgSY2jE92aGvmh21WGz4tae_GOP7dDxfpI0tpRC-2whrGisaalC-PrR2fQ/exec';
   const btn = document.getElementById('sync-btn');
   btn.disabled = true;
   setSyncStatus('🔄 Descargando datos desde Google Sheets…', 'loading');
@@ -702,10 +699,8 @@ function renderDash() {
 // INIT
 // ══════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
-  const url = localStorage.getItem('sheets_url');
-  if (url) {
-    document.getElementById('sh-url').value = url;
-    document.getElementById('cfg-banner').style.display = 'none';
+  document.getElementById('cfg-banner').style.display = 'none';
+  setSyncStatus('✅ Google Sheets conectado automáticamente.', 'ok');
     setSyncStatus('✅ Google Sheets conectado — ' + url.slice(0,55) + '…  Presione "Sincronizar" para cargar datos.', 'ok');
   }
 });
